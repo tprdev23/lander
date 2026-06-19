@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Job {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  title       String
+  company     String
+  location    String?
+  sourceUrl   String
+  description String?  @db.Text
+  salary      String?
+  jobType     String?
+  source      String?
+
+  status      JobStatus @default(SAVED)
+  notes       String?   @db.Text
+
+  aiSummary         String? @db.Text
+  aiInterviewQs     String? @db.Text
+  aiTalkingPoints   String? @db.Text
+  aiCoverLetter     String? @db.Text
+  aiOutreachMessage String? @db.Text
+  aiCvSuggestions   String? @db.Text
+
+  documents Document[]
+}
+
+model Document {
+  id        String       @id @default(cuid())
+  createdAt DateTime     @default(now())
+  jobId     String
+  job       Job          @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  type      DocumentType
+  title     String
+  content   String       @db.Text
+}
+
+enum JobStatus {
+  SAVED
+  APPLIED
+  INTERVIEW
+  OFFER
+  REJECTED
+}
+
+enum DocumentType {
+  COVER_LETTER
+  FOLLOW_UP_EMAIL
+  THANK_YOU_EMAIL
+  RECRUITER_OUTREACH
+  LINKEDIN_MESSAGE
+  NEGOTIATION_EMAIL
+}
