@@ -16,7 +16,7 @@ export function middleware(request: NextRequest) {
 
   if (!appPassword) return NextResponse.next();
 
-  const expectedValue = Buffer.from(`authenticated:${appPassword}`).toString("base64");
+  const expectedValue = btoa(`authenticated:${appPassword}`);
   const isValid = session?.value === expectedValue;
 
   if (!isValid) {
